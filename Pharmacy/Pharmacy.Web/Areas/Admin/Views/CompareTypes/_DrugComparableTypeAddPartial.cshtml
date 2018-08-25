@@ -1,0 +1,10 @@
+﻿@model IEnumerable<SelectListItem>
+
+<div class="form-group col-md-4">
+    <select asp-items="@Model" class="form-control" id="interactionTypeId">
+        <option value="">Избери лекарствен тип</option>
+    </select>
+</div>
+<div class="form-group col-md-4">
+    <button type="button" class="btn btn-default" id="btnAddInteractionType">Добави</button>
+</div>

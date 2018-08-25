@@ -1,0 +1,55 @@
+﻿@model ComparableDrugFormModel
+@{
+    ViewData["Title"] = "AddCross";
+}
+
+<h2 class="text-center">AddGeneric</h2>
+<div class="container">
+    <div class="row">
+        @*@Html.Partial("_DrugComparableTypeAddPartial", Model.DrugTypes)*@
+        <table class="table table-hover col-md-4">
+            <thead>
+                <tr>
+                    <th>Вид</th>
+                </tr>
+            </thead>
+            <tbody id="genericTypes"></tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(() => {
+        let renderTypes = function renderGenericTypes()
+        {
+            let urlComponents = window.location.pathname.split("/");
+            let id = urlComponents[urlComponents.length - 1];
+            $.get(`/DrugComperator/Drugs/CrossDrugs/${id}`, (data) => {
+                for (type of data) {
+                    $("#genericTypes").append(`<tr><td>${type.name}</td ></tr>`);
+                }
+            });
+        }
+
+        renderTypes();
+
+        $("#btnAddInteractionType").click(() => {
+            $.ajax({
+                url: window.location.pathname,
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: "POST",
+                data: $("#interactionTypeId").val()
+            })
+                .done(() => {
+                    swal("Успешно добавен генерик!");
+                    $("#genericTypes").text("");
+                }, renderTypes)
+                .fail(() => { swal("Възникна грешка, опитайте отново!") })
+            })
+        })
+    </script>
+}

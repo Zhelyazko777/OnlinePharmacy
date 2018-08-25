@@ -1,0 +1,72 @@
+﻿@model OrdersViewModel
+@{
+    ViewData["Title"] = "AllUnreaded";
+}
+
+<h2 class="text-center py-3">Нови поръчки</h2>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Номер на поъчката</th>
+            <th>Дата на поръчката</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model.Orders)
+        {
+            <tr>
+                <td class="px-5">@order.Id</td>
+                <td>@order.DateOfOrdering</td>
+                <td><a asp-area="Admin" asp-action="ById" asp-controller="Orders" asp-route-id="@order.Id" class="btn btn-primary btnOrderDetails">Подробности</a></td>
+                <td>
+                    <form asp-action="MarkAsRead" asp-controller="Orders" asp-area="Admin" asp-route-id="@order.Id">
+                        <input type="submit" class="btn btn-warning" value="Отбележи като прочетена" />
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@Html.Partial("_PagesPartial", new ViewModelWithPages { AllPages = Model.AllPages, CurrentPage = Model.CurrentPage })
+
+@section Scripts{
+    <script>
+        $(
+            $(".btnOrderDetails").click(() => {
+                event.preventDefault();
+                let url = event.target.href;
+                $.ajax({
+                    url: url,
+                    method: "GET"
+                })
+                    .done((data) => {
+                        let items = '<ul class="list-unstyled">';
+                        let totalOrderPrice = 0;
+                        for (item of data.items) {
+                            items += `<li>Име на продукта: ${item.name}</li>
+                                      <li>Цена: ${Number(item.price).toFixed(2)} лв</li>
+                                      <li>Количество: ${item.quantity} брой/я</li>
+                                      <li>Общо: ${Number(item.price * item.quantity).toFixed(2)} лв</li>`;
+                            totalOrderPrice += item.price * item.quantity;
+                        }
+                        items += "</ul>";
+                        swal({
+                            title: `Поръчка номер: ${data.id}`,
+                            html: `<ul class="list-unstyled"><li>Купувач: ${data.username}</li>
+                                   <li><h4>Продукти:</h4>
+                                   </li><li>${items}</li></ul>
+                                   <h4>Крайна цена на поръчката: ${Number(totalOrderPrice).toFixed(2)} лв</h4>`
+                        })
+                    })
+                    .fail(() => {
+                        console.log("Error");
+                    })
+            })
+        )
+    </script>
+}

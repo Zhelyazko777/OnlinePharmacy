@@ -1,0 +1,85 @@
+﻿@model ProductsWithDetailsViewModel
+@{
+    ViewData["Title"] = "ById";
+}
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery AntiForgery;
+
+@section Styles
+{
+    <link href="~/css/shop-item.css" rel="stylesheet" />
+}
+
+<!-- Page Content -->
+<div class="container">
+    <div class="row">
+        @(await Component.InvokeAsync<CategoriesComponent>())
+        <div class="col-lg-9">
+            <div class="card mt-4 container">
+                <img class="card-img-top img-fluid" src="~/ProductsImages/@Model.Product.ImgName" alt="">
+                <div class="card-body">
+                    <h3 class="card-title">@Model.Product.Name</h3>
+                    <h4>@String.Format("{0:0.00}", Model.Product.Price) лв</h4>
+                    <p class="card-text">@Html.Raw(@Model.Product.Description)</p>
+                    <input type="number" id="quantity" value="1" class="form-control col-1 d-inline-block" />
+                    <input type="button" class="btn btn-success" value="Добави в количката" id="AddToCard" />
+                    <div class="row float-right">
+                        <a asp-area="DrugComperator" asp-controller="Drugs" asp-action="GetGenericDrugs" asp-route-id="@Model.Product.ProductId" class="mx-1 btn btn-primary">Генерици</a>
+                        <a asp-area="DrugComperator" asp-controller="Drugs" asp-action="GetCrossDrugs" asp-route-id="@Model.Product.ProductId" class="mx-1 btn btn-primary">Противодействащи</a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-area="Admin" asp-controller="Products" asp-action="Update" asp-route-id="@Model.Product.ProductId" class="mx-1 btn btn-warning col-md-2">Update</a>
+                            <form class="d-inline-block mx-1" asp-area="Admin" asp-controller="Products" asp-action="Delete" asp-route-id="@Model.Product.ProductId">
+                                <input type="submit" class="btn btn-danger float-right" value="Delete" />
+                            </form>
+
+                        }
+                    </div>
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col-lg-9 -->
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(
+            $("#AddToCard").click(() => {
+                let url = `https://localhost:5001/Shop/ShoppingCart/Add/${@Model.Product.ProductId}`;
+
+                $.ajax({
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        "RequestVerificationToken": "@AntiForgery.GetAndStoreTokens(Context).RequestToken"
+                    },
+                    'type': 'POST',
+                    'url': url,
+                    'data': $("#quantity").val()
+                })
+                    .done(() => {
+                        swal({
+                            title: "Успешно добвихте нов продукт в колицхката си!",
+                            cancelButtonText: "Продължете да пазарувате",
+                            showCancelButton: true,
+                            confirmButtonText: "Вижте количката",
+                            allowEscapeKey: false,
+                            allowOutsideClick: false
+                        })
+                            .then((value) => {
+                                if (value['dismiss'] != 'cancel') {
+                                    location.replace("/Shop/ShoppingCart/Items");
+                                }
+                                else {
+                                    location.replace("/Shop/Products/All");
+                                }
+                            })
+                    })
+                .fail((first, second, third) => { console.dir(first); console.dir(second); console.dir(third) })
+            })
+        )
+    </script>
+}
+<!-- /.container -->

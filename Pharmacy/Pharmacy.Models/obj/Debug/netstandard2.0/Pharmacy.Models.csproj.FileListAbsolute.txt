@@ -1,0 +1,9 @@
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Models\bin\Debug\netstandard2.0\Pharmacy.Models.deps.json
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Models\bin\Debug\netstandard2.0\Pharmacy.Models.dll
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Models\bin\Debug\netstandard2.0\Pharmacy.Models.pdb
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Models\obj\Debug\netstandard2.0\Pharmacy.Models.csproj.CoreCompileInputs.cache
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Models\obj\Debug\netstandard2.0\Pharmacy.Models.AssemblyInfoInputs.cache
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Models\obj\Debug\netstandard2.0\Pharmacy.Models.AssemblyInfo.cs
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Models\obj\Debug\netstandard2.0\Pharmacy.Models.dll
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Models\obj\Debug\netstandard2.0\Pharmacy.Models.pdb
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Models\obj\Debug\netstandard2.0\Pharmacy.Models.csprojAssemblyReference.cache

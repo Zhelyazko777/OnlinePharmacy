@@ -1,0 +1,12 @@
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Data\bin\Debug\netstandard2.0\Pharmacy.Data.deps.json
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Data\bin\Debug\netstandard2.0\Pharmacy.Data.dll
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Data\obj\Debug\netstandard2.0\Pharmacy.Data.csprojAssemblyReference.cache
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Data\obj\Debug\netstandard2.0\Pharmacy.Data.csproj.CoreCompileInputs.cache
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Data\obj\Debug\netstandard2.0\Pharmacy.Data.AssemblyInfoInputs.cache
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Data\obj\Debug\netstandard2.0\Pharmacy.Data.AssemblyInfo.cs
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Data\bin\Debug\netstandard2.0\Pharmacy.Data.pdb
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Data\obj\Debug\netstandard2.0\Pharmacy.Data.dll
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Data\obj\Debug\netstandard2.0\Pharmacy.Data.pdb
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Data\bin\Debug\netstandard2.0\Pharmacy.Models.dll
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Data\bin\Debug\netstandard2.0\Pharmacy.Models.pdb
+D:\Projects\C#Projects\Pharmacy\Pharmacy.Data\obj\Debug\netstandard2.0\Pharmacy.Data.csproj.CopyComplete

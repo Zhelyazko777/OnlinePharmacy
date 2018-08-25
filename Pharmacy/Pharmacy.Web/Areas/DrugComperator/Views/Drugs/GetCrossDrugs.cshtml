@@ -1,0 +1,36 @@
+﻿@model CrossDrugsViewModel
+@{
+    ViewData["Title"] = "GetCrossDrugs";
+}
+
+<h2 class="text-center">Противодействащи лекарства</h2>
+
+<div class="container">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Вид</th>
+                <th>Цена</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.CrossDrugs.Ids.Count; i++)
+            {
+                //for (int j = 0; j < Model.CrossDrugs.Ids[i].Count; j++)
+                //{
+                    <tr>
+                        <td><img src="~/ProductsImages/@Model.CrossDrugs.ImgNames[i]" style="height: 100px; width: 100px;" /></td>
+                        <td>@Model.CrossDrugs.Names[i]</td>
+                        <td>@Model.CrossDrugs.Prices[i]</td>
+                        <td><a class="btn btn-primary" asp-area="Shop" asp-controller="Products" asp-action="ById" asp-route-id="@Model.CrossDrugs.Ids[i]">Към продукта</a></td>
+                    </tr>
+                //  }
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@Html.Partial("_PagesPartial", new Pharmacy.Common.ViewModelWithPages { AllPages = Model.AllPages, CurrentPage = Model.CurrentPage });

@@ -1,0 +1,65 @@
+﻿@model ProductFormModel
+@{
+    ViewData["Title"] = "Update";
+}
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@section Styles
+    {
+    <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link href="//cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
+}
+
+<h2 class="text-center">Добави продукт</h2>
+<div class="container">
+    <form asp-area="Admin" enctype="multipart/form-data" asp-controller="Products" asp-action="Update" method="post">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Price"></label>
+            <input asp-for="Price" class="form-control" />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Barcode"></label>
+            <input asp-for="Barcode" class="form-control" />
+            <span asp-validation-for="Barcode" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="DrugTypeId"></label>
+            <select class="form-control" asp-for="DrugTypeId" asp-items="Model.DrugTypes"></select>
+            <span asp-validation-for="DrugTypeId" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="CategoryId"></label>
+            <select class="form-control" asp-for="CategoryId" asp-items="Model.Categories"></select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description" rows="10" class="form-control editor"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        @*<div class="form-group">
+                <label asp-for="Image"></label>
+                <input type="file" asp-for="Image" onchange="readURL(this)" style="display: inline-block" />
+                <span asp-validation-for="Image" class="text-danger"></span>
+                <img src="#" id="img" hidden />
+            </div>*@
+        <div class="form-group">
+            <button type="submit" class="btn btn-default">Добави</button>
+        </div>
+    </form>
+</div>
+@{
+    var tinyMiceAppKey = Configuration["TinyMiceAppKey"];
+}
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=@tinyMiceAppKey"></script>
+    <script>tinymce.init({ selector: '#editor' });</script>
+}
+

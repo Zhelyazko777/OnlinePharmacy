@@ -1,0 +1,24 @@
+﻿@model List<ProductsServiceModel>
+@{
+    ViewData["Title"] = "_Products";
+}
+
+@foreach (var product in Model)
+{
+    <div class="col-lg-3 col-md-5 mb-4">
+        <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="~/ProductsImages/@product.ImgName" alt=""></a>
+            <div class="card-body">
+                <h4 class="card-title">
+                    <a href="#">@product.Name</a>
+                </h4>
+                <div class="py-3">
+                    <h5 class="d-inline-block">@String.Format("{0:0.00}", product.Price) лв</h5>
+                    @{ var data = new Dictionary<string, string>() { { "id", product.ProductId.ToString() } }; }
+                    <a asp-area="Shop" asp-controller="Products" asp-action="ById" asp-all-route-data="data" class="btn btn-success float-right">Още</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

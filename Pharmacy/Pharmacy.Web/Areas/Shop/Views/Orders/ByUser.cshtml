@@ -1,0 +1,56 @@
+﻿@model OrdersHistoryViewModel
+@{
+    ViewData["Title"] = "ByUser";
+}
+
+<h2 class="text-center">История на поръчките</h2>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Номер на поръчка</th>
+            <th>Дата на поръчка</th>
+            <th>Статус</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model.Orders)
+        {
+            <tr>
+                <th>@order.Id</th>
+                <td>@order.DateOfOrdering</td>
+                <td>@(order.IsRead == true ? "Приета" : "Изчаква одобрение")</td>
+                <td><a asp-area="Shop" asp-controller="Orders" asp-action="WithDetails" asp-route-id="@order.Id" class="btn btn-primary btnOrderDetails">Виж подробност</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@Html.Partial("_PagesPartial", new ViewModelWithPages { AllPages = Model.AllPages, CurrentPage = Model.CurrentPage })
+
+@section Scripts{
+    <script>
+        $('.btnOrderDetails').click(() => {
+            event.preventDefault();
+            $.get(event.target.href, (data) => {
+                let items = '<ul class="list-unstyled">';
+                let totalOrderPrice = 0;
+                for (item of data.items) {
+                    items += `<li>Име на продукта: ${item.name}</li>
+                                          <li>Цена: ${Number(item.price).toFixed(2)} лв</li>
+                                          <li>Количество: ${item.quantity} брой/я</li>
+                                          <li>Общо: ${Number(item.price * item.quantity).toFixed(2)} лв</li>`;
+                    totalOrderPrice += item.price * item.quantity;
+                }
+                items += "</ul>";
+                swal({
+                    title: `Поръчка номер: ${data.id}`,
+                    html: `<ul class="list-unstyled"><li><h4>Продукти:</h4>
+                                       </li><li>${items}</li></ul>
+                                       <h4>Крайна цена на поръчката: ${Number(totalOrderPrice).toFixed(2)} лв</h4>`
+                })
+            })
+        })
+    </script>
+}

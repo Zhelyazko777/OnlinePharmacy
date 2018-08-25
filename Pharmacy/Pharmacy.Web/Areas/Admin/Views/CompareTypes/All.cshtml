@@ -1,0 +1,242 @@
+﻿@model DrugIngredientsViemModel
+@{
+    ViewData["Title"] = "All";
+}
+
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Csrf;
+
+<a asp-area="Admin" asp-controller="CompareTypes" asp-action="Add" class="btn btn-primary text-white float-right my-3 mx-3" id="btnIngredientAddTest"><i class="fas fa-plus"></i> Добави активна съставка</a>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Лекарствен тип</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ var counter = 0; }
+        @foreach (var drugType in Model.DrugIngredients)
+        {
+            <tr>
+                <th scope="row">@(++counter)</th>
+                <td>@drugType.Name</td>
+                <td><a class="btn btn-primary btnAddCross" asp-area="Admin" asp-controller="CompareTypes" asp-action="AddCross" asp-route-id="@drugType.Id">Добави противодействащо</a></td>
+                <td><a class="btn btn-primary btnViewCross" asp-area="Admin" asp-controller="CompareTypes" asp-action="CrossIngredients" asp-route-id="@drugType.Id">Виж противодействащи</a></td>
+                <td><a class="btn btn-warning btnUpdateIngredient" asp-area="Admin" asp-controller="CompareTypes" asp-action="Update" asp-route-id="@drugType.Id">Промени</a></td>
+                <td><a class="btn btn-danger text-white btnIngridientDelete" asp-area="Admin" asp-controller="CompareTypes" asp-action="Delete" asp-route-id="@drugType.Id">Изтрии</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@Html.Partial("_PagesPartial", new ViewModelWithPages { AllPages = Model.AllPages, CurrentPage = Model.CurrentPage })
+
+@section Scripts
+    {
+    <script>
+        $("#btnIngredientAddTest").click((event) => {
+            event.preventDefault();
+            swal({
+                title: "Добави активна съставка",
+                input: 'text',
+                showCancelButton: true,
+                cancelButtonText: "Отмени",
+                confirmButtonText: "Добави",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false
+            })
+                .then((input) => {
+                    if (input['dismiss'] != 'cancel') {
+                        $.ajax({
+                            url: event.target.href,
+                            headers: {
+                                "Accept": "application/json",
+                                "Content-Type": "application/json",
+                                "RequestVerificationToken": "@(Csrf.GetAndStoreTokens(Context).RequestToken)"
+                            },
+                            method: 'POST',
+                            data: JSON.stringify(input.value)
+                        })
+                            .done(() => {
+                                location.reload();
+                            });
+                    }
+                });
+
+        }),
+        $('.btnAddCross').click((event) => {
+            event.preventDefault();
+            $.ajax({
+                url: "/Admin/CompareTypes/AllForAjax",
+                method: "GET"
+            })
+                .done((data) => {
+                    let obj = {};
+                    for (ingredient of data) {
+                        obj[ingredient.id] = ingredient.name;
+                    }
+                    swal({
+                        title: "Изберете противодействаща съставка",
+                        input: 'select',
+                        inputPlaceholder: "Избери съставка",
+                        inputOptions: obj,
+                        showCancelButton: true,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    })
+                        .then((input) => {
+                            if (!input.hasOwnProperty('dismiss')) {
+                                $.ajax({
+                                    url: event.target.href,
+                                    method: 'POST',
+                                    headers: {
+                                        "Accept": "application/json",
+                                        "Content-Type": "application/json",
+                                        "RequestVerificationToken": "@(Csrf.GetAndStoreTokens(Context).RequestToken)"
+                                    },
+                                    data: JSON.stringify(input.value)
+                                })
+                                    .done(() => { swal({ title: "Gotovo e!" }) });
+                            }
+                        });
+                });
+        });
+        $('.btnViewCross').click((event) => {
+            event.preventDefault();
+            $.ajax({
+                url: event.target.href,
+                method: "GET"
+            })
+                .done((data) => {
+                    let ingredients = "<ul>";
+                    for (ingredient of data) {
+                        ingredients += `<li>${ingredient}</li>`
+                    }
+                    ingredients += '</ul>';
+                    swal({
+                        title: "Противодействащи",
+                        html: ingredients
+                    })
+                })
+        });
+        $('.btnIngridientDelete').click((event) => {
+            event.preventDefault();
+            swal({
+                title: "Сигурен ли си, че искаш да го изтриеш?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                cancelButtonText: 'Назад',
+                confirmButtonText: 'Изтрии!',
+                allowEnterKey: false,
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            })
+                .then((input) => {
+                    if (input['dismiss'] != 'cancel') {
+                        $.ajax({
+                            url: event.target.href,
+                            method: "POST",
+                            headers: {
+                                "RequestVerificationToken": "@(Csrf.GetAndStoreTokens(Context).RequestToken)"
+                            }
+                        })
+                            .done(() => {
+                                location.reload();
+                            })
+                    }
+                });
+        });
+                    //    $.ajax({
+                    //        url: $('#btnIngredientAdd').attr('href'),
+                    //        headers: {
+                    //            "Accept": "application/json",
+                    //            "Content-Type": "application/json"
+                    //        },
+                    //        method: "POST",
+                    //        data: JSON.stringify(input.value)
+                    //    })
+                    //        .done(() => {
+                    //            location.reload();
+                    //        })
+                    //        .fail(() => { console.log("Error") });
+        //            }
+        //       })
+        //});
+        $('.btnUpdateIngredient').click((event) => {
+            event.preventDefault();
+            $.get(event.target.href, (data) => {
+                swal({
+                    title: 'Промении съставката',
+                    input: 'text',
+                    inputValue: data.name,
+                    confirmButtonText: "Запази",
+                    cancelButtonText: "Отмени",
+                    showCancelButton: true,
+                    allowEnterKey: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                })
+                    .then((input) => {
+                        if (input['dismiss'] != 'cancel') {
+                            $.ajax({
+                                url: event.target.href,
+                                headers: {
+                                    "Accept": "application/json",
+                                    "Content-Type": "application/json",
+                                    "RequestVerificationToken": "@(Csrf.GetAndStoreTokens(Context).RequestToken)"
+                                },
+                                method: "POST",
+                                data: JSON.stringify(input.value)
+                            })
+                                .done(() => {
+                                    location.reload();
+                                })
+                                .fail(() => { console.log("Error") });
+                        }
+                    });
+            })
+        });
+        @*$("#test").click(() =>
+        {
+            $.ajax({
+                url: "/Admin/CompareTypes/AllForAjax",
+                headers: "application/json",
+                mmethod: "GET"
+            })
+                .done((data) =>
+                {
+                    let types = [];
+
+                    for (var i = 0; i < data.length; i++) {
+                        types[i] = { text: data[i].name, value: data[i].id };
+                    }
+                    bootbox.prompt({
+                        title: "Избери генерик",
+                        inputType: 'select',
+                        inputOptions: types,
+                        callback: function (result) {
+                            if (result !== null) {
+                                $.ajax({
+                                    url: "/Admin/CompareTypes/AddGeneric",
+                                    headers: "application/json",
+                                    method: "POST",
+                                    data: { "BaseDrugId": @ }
+                                })
+                             }
+                        }
+                })
+                })
+                .fail(() => {
+                    bootbox.alert("Възникна грешка!")
+                });
+        })*@
+    </script>
+}

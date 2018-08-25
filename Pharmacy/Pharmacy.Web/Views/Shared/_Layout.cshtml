@@ -1,0 +1,122 @@
+﻿@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery AntiForgery;
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Pharmacy.Web</title>
+
+    <environment include="Development">
+        @RenderSection("Styles", required: false)
+        <link href="~/lib/bootstrap-4.1.0-dist/css/bootstrap-grid.min.css" rel="stylesheet" />
+        <link href="~/lib/bootstrap-4.1.0-dist/css/bootstrap-reboot.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" asp-fallback-href="~/lib/bootstrap-4.1.0-dist/css/bootstrap.min.css" />
+        <link href="~/css/modern-business.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    </environment>
+</head>
+<body>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand col-3" href="/">Аптека</a>
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="Shop" asp-controller="Products" asp-action="All">Е-Аптека</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/AboutUs">За Нас</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/Contacts">Контакти</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="Shop" asp-controller="ShoppingCart" asp-action="Items"><i class="fas fa-shopping-cart"></i></a>
+                    </li>
+                </ul>
+                <partial name="_LoginPartial" />
+                @*<ul class="navbar-nav mx-2">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item"><a asp-area="Admin" asp-controller="Orders" asp-action="AllUnreaded"><i id="notification_icon" class="fas fa-bell"></i></a></li>
+                    }
+                </ul>*@
+            </div>
+        </div>
+    </nav>
+    <!-- Page Content -->
+    @RenderBody()
+    <!-- /.container -->
+    <!-- Footer -->
+    <footer class="py-5 bg-dark">
+        <div class="container">
+            <p class="m-0 text-center text-white">Copyright &copy; Your Website 2018</p>
+        </div>
+        <!-- /.container -->
+    </footer>
+    <environment include="Development">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+                crossorigin="anonymous"
+                asp-fallback-src="~/js/jquery.min.js">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap-4.1.0-dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
+        </script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"
+                asp-fallback-src="~/lib/bootstrap-4.1.0-dist/js/bootstrap.bundle.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
+        </script>
+
+        @{
+            var tinyMiceAppKey = Configuration["TinyMiceAppKey"];
+        }
+        <script src="https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=@tinyMiceAppKey"></script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.26.11/dist/sweetalert2.all.min.js"></script>
+        <script>
+            //$(
+            //    $("#notification_icon").ready(() => {
+            //        $.ajax({
+            //            url: "/Admin/Orders/NumOfUnread",
+            //            method: "GET"
+            //        })
+            //            .done((data) => {
+            //                if (data > 0) {
+            //                    $("#notification_icon").text(data);
+            //                    $("#notification_icon").addClass("text-white");
+            //                }
+            //            })
+            //            .fail(() => {
+            //                console.log("Error");
+            //            });
+            //    })
+            //);
+            $('#btnLogout').click(() => {
+                event.preventDefault();
+                $.ajax({
+                    url: event.target.href,
+                    method: "POST",
+                    headers: {
+                        "RequestVerificationToken": "@AntiForgery.GetAndStoreTokens(Context).RequestToken"
+                    }
+                }).done(() => {
+                    location.replace("/Home/Index");
+                })
+            })
+        </script>
+    </environment>
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>
+
+

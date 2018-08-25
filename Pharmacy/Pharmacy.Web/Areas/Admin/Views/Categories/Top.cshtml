@@ -1,0 +1,124 @@
+﻿@model List<CategoriesAdminServiceModel>
+@{
+    ViewData["Title"] = "All";
+}
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery AntiForgery
+
+<h2 class="text-center">Главни категории</h2>
+
+<a asp-area="Admin" asp-controller="Categories" asp-action="Add" class="btn btn-primary text-white float-right mx-3 my-3" id="btnCategoryAdd"><i class="fas fa-plus"></i> Добави категория</a>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Име на категорията</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model)
+        {
+        <tr>
+            <th>@category.Name</th>
+            <th><a class="btn btn-primary text-white btnAddChiledCategory" id="@category.Id" asp-area="Admin" asp-controller="Categories" asp-action="AddChiled" asp-route-id="@category.Id">Добави подкатегория</a></th>
+            <th><a class="btn btn-success text-white btnChiledCategories" asp-area="Admin" asp-controller="Categories" asp-action="Children" asp-route-id="@category.Id">Виж подкатегориите</a></th>
+        </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts{
+    <script>    
+        $(
+            $('#btnCategoryAdd').click((event) => {
+                event.preventDefault();
+                swal({
+                    title: "Добави категория",
+                    input: "text",
+                    confirmButtonText: "Добави",
+                    cancelButtonText: "Отмени",
+                    showCancelButton: true,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                })
+                    .then((input) => {
+                        if (input['dismiss'] == 'cancel') {
+
+                        } else { 
+                            $.ajax({
+                                url: event.target.href,
+                                headers: {
+                                    "Accept": "application/json",
+                                    "Content-Type": "application/json",
+                                    "RequestVerificationToken": "@(AntiForgery.GetAndStoreTokens(Context).RequestToken)"
+                                },
+                                method: "POST",
+                                data: JSON.stringify(input.value)
+                            })
+                                .done(() => {
+                                    location.reload();
+                                })
+                                .fail(() => {
+                                    swal({
+                                        title: "Възникна грешка опитайте отново!"
+                                    });
+                                })
+                        }
+                    });
+            }),
+            $('.btnChiledCategories').click((event) => {
+                event.preventDefault();
+                $.get(event.target.href, (data) => {
+                    let categories = "<ul>";
+                    for (let category of data) {
+                        categories += `<li>${category.name}</li>`;
+                    }
+                    categories += "</ul>";
+                    swal({ 
+                        title: 'Подкатегории: ',
+                        html: categories
+                    });
+                });
+            }),
+            $('.btnAddChiledCategory').click((event) => {
+                event.preventDefault();
+                $.get("/Admin/Categories/CategoriesDropDown/" + event.target.id, (data) => {
+                    let obj = {};
+                    for (let category of data) {
+                        let value = category.value
+                        obj[value] = category.text;
+                    }
+                    swal({
+                        title: 'Select Chiled Category',
+                        input: 'select',
+                        inputOptions: obj,
+                        inputPlaceholder: 'Избери категория',
+                        cancelButtonText: "Отмени",
+                        showCancelButton: true,
+                    })
+                        .then((input) => {
+                            if (input['dismiss'] != 'cancel') {
+                                $.ajax({
+                                    url: event.target.href,
+                                    method: "POST",
+                                    headers: {
+                                        "Accept": "application/json",
+                                        "Content-Type": "application/json",
+                                        "RequestVerificationToken": "@(AntiForgery.GetAndStoreTokens(Context).RequestToken)"
+                                    },
+                                    data: JSON.stringify(input.value)
+                                })
+                                    .done(() => {
+                                        location.reload();
+                                    })
+                                    .fail(() => {
+                                        swal("Възникна грешка опитайте отново!");
+                                    })
+                            }
+                         })
+                });
+            })
+        )
+    </script>
+ }

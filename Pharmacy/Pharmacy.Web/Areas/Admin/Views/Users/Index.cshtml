@@ -1,0 +1,49 @@
+﻿@model UsersWithPagesViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2 class="text-center">Потребители</h2>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Потребителкско име</th>
+            <th>Имейл</th>
+            <th>Дата на регистрация</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var counter = 0;
+         }
+        @foreach (var user in Model.Users)
+        {
+        <tr>
+            <th scope="row">@(++counter)</th>
+            <td>@user.Username</td>
+            <td>@user.Email</td>
+            <td>@user.DateOfRegistration</td>
+            <td><a asp-area="Admin" asp-controller="Users" asp-action="ById" asp-route-id="@user.Id" class="btn btn-primary btnUserDetails">Детайли</a></td>
+            <td><a asp-area="Admin" asp-controller="Users" asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger">Изтрии</a></td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+@Html.Partial("_PagesPartial", new ViewModelWithPages { AllPages = Model.AllPages, CurrentPage = Model.CurrentPage })
+
+@section Scripts{ 
+    <script>
+        $('.btnUserDetails').click((event) => {
+            event.preventDefault();
+            $.get(event.target.href, (data) => {
+                swal({
+                    title: `Информация за потрибител: ${data.username}`,
+                    html: `<ul><li>Address: ${data.address}</li><li>Full Name: ${data.fullName}</li><li>Phone Number: ${data.phoneNumber}</li><li>Email: ${data.email}</li></ul>`
+                });
+            })
+        });
+    </script>
+}
